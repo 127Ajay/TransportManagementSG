@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="TransportManagementSG.Application/TransportManagementSG.Application.csproj" Id="81613a50-5b38-450b-ada0-d3c90dc4cf58" />
+  <Project Path="TransportManagementSG.Contracts/TransportManagementSG.Contracts.csproj" Id="f8b3be43-6132-48a1-a704-e4e1c300ee6e" />
+  <Project Path="TransportManagementSG.UI/TransportManagementSG.UI.csproj" Id="58989bff-22a8-444d-894a-bb159d73a947" />
+</Solution>
