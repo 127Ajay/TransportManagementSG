@@ -1,7 +1,12 @@
-var builder = WebApplication.CreateBuilder(args);
+using TransportManagementSG.Application.Database;
+using TransportManagementSG.Application.Extensions;
 
+var builder = WebApplication.CreateBuilder(args);
+var configuration = builder.Configuration;
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddDatabase(configuration["ConnectionStrings:DefaultConnection"]);
 
 var app = builder.Build();
 
@@ -25,5 +30,7 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
 
+var dbIntializer = app.Services.GetRequiredService<DBInitializer>();
+await dbIntializer.InitalizeAsync();
 
 app.Run();
