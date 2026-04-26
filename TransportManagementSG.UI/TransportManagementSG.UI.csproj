@@ -11,8 +11,4 @@
     <ProjectReference Include="..\TransportManagementSG.Contracts\TransportManagementSG.Contracts.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="ViewModels\" />
-  </ItemGroup>
-
 </Project>

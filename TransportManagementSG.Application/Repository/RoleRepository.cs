@@ -14,13 +14,13 @@ public class RoleRepository: IRoleRepository
         _dbConnectionFactory = dbConnectionFactory;
     }
 
-    public async Task<IEnumerable<Role>> GetAllRoles(CancellationToken cancellationToken)
+    public async Task<IEnumerable<Role>> GetAllRoles(CancellationToken cancellationToken = default)
     {
         using var connection = await _dbConnectionFactory.CreateConnectionAsync();
-        using var transaction = connection.BeginTransaction();
+        //using var transaction = connection.BeginTransaction();
 
         var roles = await connection.QueryAsync<Role>(
-            new CommandDefinition("usp_GetAllRoles", cancellationToken));
+            new CommandDefinition("usp_GetAllRoles", cancellationToken: cancellationToken));
         
         return roles;
     }
@@ -28,7 +28,7 @@ public class RoleRepository: IRoleRepository
     public async Task<Role> GetRoleByName(string roleName, CancellationToken cancellationToken = default)
     {
         using var connection = await _dbConnectionFactory.CreateConnectionAsync();
-        using var transaction = connection.BeginTransaction();
+        //using var transaction = connection.BeginTransaction();
         
         var parameters = new DynamicParameters();
         parameters.Add("@RoleName", roleName);
