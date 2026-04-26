@@ -1,3 +1,4 @@
+using System.Data;
 using Dapper;
 
 namespace TransportManagementSG.Application.Database;
@@ -15,6 +16,15 @@ public class DBInitializer
     {
         using var connection = await _connectionFactory.CreateConnectionAsync();
 
+        await CreateTables(connection);
+        await CreateStoredProcedures(connection);
+        
+        //Seed Data
+        await SeedRoles(connection);
+    }
+
+    private async Task CreateTables(IDbConnection connection)
+    {
         var sql = @"
             IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='Role' AND xtype='U')
             BEGIN
@@ -112,4 +122,61 @@ public class DBInitializer
         await connection.ExecuteAsync(sql);
     }
     
+    private async Task CreateStoredProcedures(IDbConnection connection)
+    {
+        // 🔹 Create User SP
+        var sql = @"
+            CREATE OR ALTER PROCEDURE usp_GetAllRoles
+            AS
+            BEGIN
+                SET NOCOUNT ON;
+
+                SELECT 
+                    RoleId,
+                    RoleName,
+                    IsActive
+                FROM Role
+                WHERE IsActive = 1
+                ORDER BY RoleName;
+            END";
+        
+        await connection.ExecuteAsync(sql);
+
+        var sql2 = @"
+            CREATE OR ALTER PROCEDURE usp_GetRolesByName
+                @RoleName NVARCHAR(100)
+            AS
+            BEGIN
+                SET NOCOUNT ON;
+
+                SELECT 
+                    RoleId,
+                    RoleName,
+                    IsActive
+                FROM Role
+                WHERE 
+                    IsActive = 1
+                    AND RoleName LIKE '%' + @RoleName + '%'
+                ORDER BY RoleName;
+            END
+        ";
+
+        await connection.ExecuteAsync(sql2);
+    }
+    
+    private async Task SeedRoles(IDbConnection connection)
+    {
+        var exists = await connection.ExecuteScalarAsync<int>(
+            "SELECT COUNT(1) FROM Role");
+
+        if (exists > 0) return;
+
+        await connection.ExecuteAsync(@"
+        INSERT INTO Role (RoleName, IsActive)
+        VALUES
+        ('Admin', 1),
+        ('Manager', 1),
+        ('Operator', 1)
+    ");
+    }
 }
