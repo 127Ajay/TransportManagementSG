@@ -7,6 +7,7 @@ var configuration = builder.Configuration;
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddDatabase(configuration["ConnectionStrings:DefaultConnection"]);
+builder.Services.AddApplicationServices();
 
 var app = builder.Build();
 

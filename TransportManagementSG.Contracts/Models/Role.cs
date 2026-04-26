@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace TransportManagementSG.Contracts
+namespace TransportManagementSG.Contracts.Model
 {
-    public class RoleMaster
+    public class Role
     {
         public int RoleId { get; set; }
         public string RoleName { get; set; }
+        public bool IsActive { get; set; }
     }
 }
