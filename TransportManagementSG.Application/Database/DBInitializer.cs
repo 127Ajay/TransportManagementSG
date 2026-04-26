@@ -34,9 +34,8 @@ public class DBInitializer
                     Email NVARCHAR(150) UNIQUE,
                     PhoneNumber NVARCHAR(20),
                     RoleId INT,
-                    PasswordHash VARBINARY(MAX),
-                    PasswordSalt VARBINARY(MAX),
                     IsActive BIT,
+                    LoginPassword NVARCHAR(MAX),
                     LastLoginDate DATETIME,
                     CreatedBy NVARCHAR(100),
                     CreatedDate DATETIME,
@@ -49,21 +48,29 @@ public class DBInitializer
             IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='VehicleType' AND xtype='U')
             BEGIN
                 CREATE TABLE VehicleType (
-                    VehicleTypeId INT PRIMARY KEY IDENTITY,
+                    VehicleTypeID INT PRIMARY KEY IDENTITY,
                     Name NVARCHAR(100),
                     WheelCount INT,
                     LengthFeet DECIMAL(10,2),
-                    IsActive BIT
+                    IsActive BIT,
+                    CreatedBy NVARCHAR(100),
+                    CreatedDate DATETIME,
+                    ModifiedBy NVARCHAR(100),
+                    ModifiedDate DATETIME
                 );
             END
 
             IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='State' AND xtype='U')
             BEGIN
                 CREATE TABLE State (
-                    StateId INT PRIMARY KEY IDENTITY,
+                    StateID INT PRIMARY KEY IDENTITY,
                     StateCode NVARCHAR(10),
                     StateName NVARCHAR(100),
-                    IsActive BIT
+                    IsActive BIT,
+                    CreatedBy NVARCHAR(100),
+                    CreatedDate DATETIME,
+                    ModifiedBy NVARCHAR(100),
+                    ModifiedDate DATETIME
                 );
             END
 
@@ -72,23 +79,31 @@ public class DBInitializer
                 CREATE TABLE TransportStatus (
                     TransportStatusId INT PRIMARY KEY IDENTITY,
                     StatusName NVARCHAR(100),
-                    IsActive BIT
+                    IsActive BIT,
+                    CreatedBy NVARCHAR(100),
+                    CreatedDate DATETIME,
+                    ModifiedBy NVARCHAR(100),
+                    ModifiedDate DATETIME
                 );
             END
 
             IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='Vehicle' AND xtype='U')
             BEGIN
                 CREATE TABLE Vehicle (
-                    VehicleId INT PRIMARY KEY IDENTITY,
+                    VehicleID INT PRIMARY KEY IDENTITY,
                     VehicleNumber NVARCHAR(50) UNIQUE,
-                    StateId INT,
-                    VehicleTypeId INT,
-                    Model NVARCHAR(100),
+                    StateID INT,
+                    VehicleTypeID INT,
+                    ModelNumber NVARCHAR(100),
                     RegistrationYear INT,
                     TransportStatusId INT,
                     IsActive BIT,
-                    FOREIGN KEY (StateId) REFERENCES State(StateId),
-                    FOREIGN KEY (VehicleTypeId) REFERENCES VehicleType(VehicleTypeId),
+                    CreatedBy NVARCHAR(100),
+                    CreatedDate DATETIME,
+                    ModifiedBy NVARCHAR(100),
+                    ModifiedDate DATETIME,
+                    FOREIGN KEY (StateID) REFERENCES State(StateID),
+                    FOREIGN KEY (VehicleTypeID) REFERENCES VehicleType(VehicleTypeID),
                     FOREIGN KEY (TransportStatusId) REFERENCES TransportStatus(TransportStatusId)
                 );
             END
