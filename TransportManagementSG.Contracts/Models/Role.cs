@@ -8,6 +8,7 @@ namespace TransportManagementSG.Contracts.Model
     {
         public int RoleId { get; set; }
         public string RoleName { get; set; }
+         public string RoleName
         public bool IsActive { get; set; }
     }
 }
