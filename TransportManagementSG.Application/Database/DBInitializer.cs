@@ -162,6 +162,30 @@ public class DBInitializer
         ";
 
         await connection.ExecuteAsync(sql2);
+
+        var sql3 = @"
+                CREATE OR ALTER PROCEDURE sp_ValidateUser
+                    @Email NVARCHAR(100),
+                    @Password NVARCHAR(100)
+                AS
+                BEGIN
+                    SET NOCOUNT ON;
+
+                    SELECT 
+                        UserId,
+                        FirstName,
+                        LastName,
+                        Email,
+                        RoleID,
+                        IsActive
+                    FROM [User]
+                    WHERE Email = @Email
+                      AND LoginPassword = @Password
+                      AND IsActive = 1
+                END
+
+            ";
+        await connection.ExecuteAsync(sql3);
     }
     
     private async Task SeedRoles(IDbConnection connection)
