@@ -19,6 +19,9 @@ public static class ApplicationServiceCollectionExtensions
     {
         services.AddScoped<IRoleRepository, RoleRepository>();
         services.AddScoped<IRoleService, RoleService>();
+        services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IUserService, UserService>();
+
         return services;
     }
 }
