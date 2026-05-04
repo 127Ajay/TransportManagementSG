@@ -1,0 +1,86 @@
+@model IEnumerable<TransportManagementSG.UI.ViewModels.RoleViewModel>
+
+@{
+    ViewData["Title"] = "Role";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-4">
+
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <h3 class="mb-0">Role Manager</h3>
+            <small class="text-muted">@Model.Count() role(s) found</small>
+        </div>
+        <a asp-action="Create" class="btn btn-primary">+ New Role</a>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info text-center">
+            No roles defined yet.
+            <a asp-action="Create" class="fw-bold">Create the first one →</a>
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover align-middle">
+                <thead class="table-dark text-center">
+                    <tr>
+                        <th style="width:80px;">#</th>
+                        <th>Role Name</th>
+                        <th style="width:120px;">Status</th>
+                        <th style="width:220px;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var role in Model)
+                    {
+                        <tr>
+                            <td class="text-center fw-bold">@role.RoleId</td>
+
+                            <td>@role.RoleName</td>
+
+                            <td class="text-center">
+                                @if (role.IsActive)
+                                {
+                                    <span class="badge bg-success">Active</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">Inactive</span>
+                                }
+                            </td>
+
+                            <td class="text-center">
+                                <div class="d-flex justify-content-center gap-2">
+
+                                    <!-- Edit -->
+                                    <a asp-action="Edit"
+                                       asp-route-id="@role.RoleId"
+                                       class="btn btn-sm btn-warning">
+                                        Edit
+                                    </a>
+
+                                    <!-- Delete (Modal Trigger) -->
+                                    <button type="button"
+                                            class="btn btn-sm btn-danger btn-delete"
+                                            data-id="@role.RoleId"
+                                            data-name="@role.RoleName"
+                                            data-url="@Url.Action("Delete", "Role", new { id = role.RoleId })"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#deleteModal">
+                                        Delete
+                                    </button>
+
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
