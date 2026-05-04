@@ -186,6 +186,65 @@ public class DBInitializer
 
             ";
         await connection.ExecuteAsync(sql3);
+
+        var sql4 = @"
+                CREATE OR ALTER PROCEDURE usp_GetRoleById
+                    @RoleId INT
+                AS
+                BEGIN
+                    SET NOCOUNT ON;
+
+                    SELECT RoleId,
+                           RoleName,
+                           IsActive
+                    FROM Role
+                    WHERE RoleId = @RoleId;
+                END";
+        await connection.ExecuteAsync(sql4);
+        
+        var sql5 = @"
+                    CREATE OR ALTER PROCEDURE usp_CreateRole
+                        @RoleName NVARCHAR(100),
+                        @IsActive BIT
+                    AS
+                    BEGIN
+                        SET NOCOUNT ON;
+
+                        INSERT INTO Role (RoleName, IsActive)
+                        VALUES (@RoleName, @IsActive);
+
+                        SELECT CAST(SCOPE_IDENTITY() AS INT) AS RoleId;
+                    END";
+        await connection.ExecuteAsync(sql5);
+
+        var sql6 = @"
+                    CREATE OR ALTER PROCEDURE usp_UpdateRole
+                        @RoleId INT,
+                        @RoleName NVARCHAR(100),
+                        @IsActive BIT
+                    AS
+                    BEGIN
+                        SET NOCOUNT ON;
+
+                        UPDATE Role
+                        SET RoleName = @RoleName,
+                            IsActive = @IsActive
+                        WHERE RoleId = @RoleId;
+                    END";
+        await connection.ExecuteAsync(sql6);
+
+        var sql7 = @"
+                    CREATE OR ALTER PROCEDURE usp_DeleteRole
+                            @RoleId INT
+                        AS
+                        BEGIN
+                            SET NOCOUNT ON;
+
+                            UPDATE Role
+                            SET IsActive = 0
+                            WHERE RoleId = @RoleId;
+                        END";
+        await connection.ExecuteAsync(sql7);
     }
     
     private async Task SeedRoles(IDbConnection connection)
