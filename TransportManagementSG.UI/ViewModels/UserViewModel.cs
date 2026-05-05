@@ -1,9 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel.DataAnnotations;
 
 namespace TransportManagementSG.UI.ViewModels
 {
-    public class UserRegistrationViewModel
+    public class UserViewModel
     {
         public int UserId { get; set; }
         [Required]
@@ -14,9 +15,9 @@ namespace TransportManagementSG.UI.ViewModels
         public string Email { get; set; }
         [Required]
         public string PhoneNumber { get; set; }
-        public int RoleID { get; set; }
+        public int? RoleID { get; set; }
         public bool IsActive { get; set; }
-
+        [ValidateNever]
         public List<SelectListItem> Roles { get; set; }
     }
 }

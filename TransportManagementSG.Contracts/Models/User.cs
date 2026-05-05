@@ -15,5 +15,7 @@ namespace TransportManagementSG.Contracts.Model
         public bool IsActive { get; set; }
         public string LoginPassword { get; set; }
         public DateTime LastLoginDate { get; set; }
+
+        public string Role { get; set; }
     }
 }

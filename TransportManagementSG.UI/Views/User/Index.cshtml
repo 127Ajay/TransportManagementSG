@@ -1,52 +1,196 @@
-﻿@model TransportManagementSG.UI.ViewModels.LoginViewModel
+﻿@model TransportManagementSG.UI.ViewModels.UserViewModel
 
 @{
-    ViewBag.Title = "Login";
-    Layout = "_LayoutLogin"; // or null if you want standalone page
+    ViewBag.Title = "Users";
 }
 
-<div class="container d-flex justify-content-center align-items-center" style="height: 100vh;">
-    <div class="card shadow-lg p-4" style="width: 400px; border-radius: 12px;">
+<div class="container-fluid">
 
-        <h3 class="text-center mb-4">Sign In</h3>
-
-        @using (Html.BeginForm("Login", "Account", FormMethod.Post))
-        {
-            @Html.AntiForgeryToken()
-
-            <!-- Email -->
-            <div class="mb-3">
-                @Html.LabelFor(m => m.Email, new { @class = "form-label" })
-                @Html.TextBoxFor(m => m.Email, new { @class = "form-control", placeholder = "Enter email", type = "email" })
-                @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
-            </div>
-
-            <!-- Password -->
-            <div class="mb-3">
-                @Html.LabelFor(m => m.Password, new { @class = "form-label" })
-                @Html.PasswordFor(m => m.Password, new { @class = "form-control", placeholder = "Enter password" })
-                @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
-            </div>
-
-            <!-- Remember Me -->
-            <div class="form-check mb-3">
-                @Html.CheckBoxFor(m => m.RememberMe, new { @class = "form-check-input" })
-                @Html.LabelFor(m => m.RememberMe, new { @class = "form-check-label" })
-            </div>
-
-            <!-- Login Button -->
-            <div class="d-grid">
-                <button type="submit" class="btn btn-primary">Login</button>
-            </div>
-
-            <!-- Extra Links -->
-            <div class="text-center mt-3">
-                @Html.ActionLink("Forgot Password?", "ForgotPassword", "Account", null, new { @class = "text-decoration-none" })
-            </div>
-        }
+    <div class="d-flex justify-content-between mb-3">
+        <h4>Users</h4>
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#userModal" onclick="openAddUserModal()">
+            + Add User
+        </button>
     </div>
+
+    <div id="messageBox" class="alert d-none" role="alert"></div>
+
+    <table id="usersTable" class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Role</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+    </table>
+
 </div>
 
+@await Html.PartialAsync("_UserModal", Model)
+
 @section Scripts {
-    @await Html.PartialAsync("_ValidationScriptsPartial")
+    <script>
+            let table;
+
+            $(document).ready(function () {
+
+            table = $('#usersTable').DataTable({
+                processing: true,
+                ajax: {
+                    url: '/User/GetAllUsers',
+                    dataSrc: '',
+                    cache: false
+                },
+                columns: [
+                    { data: 'userId', visible: false },
+
+                    {
+                        data: null,
+                        title: 'Name',
+                        render: function (data) {
+                            return data.firstName + ' ' + data.lastName;
+                        }
+                    },
+
+                    { data: 'email', title: 'Email' },
+                    { data: 'phoneNumber', title: 'Phone' },
+                    { data: 'role', title: 'Role' },
+
+                    {
+                        data: 'userId',
+                        title: 'Actions',
+                        orderable: false,
+                        render: function (data) {
+                            return `
+                                <button class='btn btn-sm btn-warning' onclick='editUser(${data})'>Edit</button>
+                                <button class='btn btn-sm btn-danger' onclick='deleteUser(${data})'>Delete</button>
+                            `;
+                        }
+                    }
+                ]
+            });
+
+        });
+
+        function openAddUserModal() {
+            $('#userForm')[0].reset();
+            $('#userId').val(0);
+            $('#userModal .modal-title').text('Add User');
+        }
+
+                        
+
+        function saveUser() {
+
+            const user = {
+                userId: $('#userId').val(),
+                firstName: $('#firstName').val(),
+                lastName: $('#lastName').val(),
+                email: $('#email').val(),
+                phoneNumber: $('#phoneNumber').val(),
+                roleID: $('#RoleID').val()
+            };
+
+             const url = user.userId == 0
+                ? '/User/CreateUser'
+                : '/User/UpdateUser';
+
+            $.ajax({
+                url: url, 
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(user),
+                success: function () {
+
+                    // close modal
+                    $('#userModal').modal('hide');
+
+                    // reset form
+                    $('#userForm')[0].reset
+
+                    showMessage(
+                             user.userId == 0
+                                ? 'User added successfully'
+                                : 'User updated successfully',
+                                  'success'
+                                );
+
+                    setTimeout(() => {
+                         table.ajax.reload(null, false);
+                    }, 500);
+
+                },
+                error: function () {
+                      $('#userModal').modal('hide');
+                    showMessage('User creation failed', 'danger');
+
+                }
+            });
+        }
+
+        function showMessage(message, type) {
+
+            const box = $('#messageBox');
+
+            box.removeClass('d-none alert-success alert-danger')
+               .addClass('alert-' + type)
+               .text(message);
+
+            // auto hide after 3 sec
+            setTimeout(() => {
+                box.addClass('d-none');
+            }, 3000);
+        }
+
+        function deleteUser(id) {
+
+            if (!confirm('Are you sure you want to delete this user?'))
+                return;
+
+            $.ajax({
+                url: '/User/DeleteUser?id=' + id,
+                type: 'POST',
+
+                success: function () {
+
+                    // success message
+                    showMessage('User deleted successfully', 'success');
+
+                    // refresh grid
+                    console.log("Reloading table...");
+
+                    table.ajax.reload(null, false);
+                },
+
+                error: function () {
+                    showMessage('User deletion failed', 'danger');
+                }
+            });
+        }
+
+        function editUser(id) {
+
+            $.get('/User/GetUserById?id=' + id, function (data) {
+                
+                $('#userId').val(data.userId);
+                $('#firstName').val(data.firstName);
+                $('#lastName').val(data.lastName);
+                $('#email').val(data.email);
+                $('#phoneNumber').val(data.phoneNumber);
+                setTimeout(() => {
+                    $('#RoleID').val(data.roleID);
+                }, 100);
+
+                $('#userModal .modal-title').text('Edit User');
+
+                // show modal
+                $('#userModal').modal('show');
+            });
+        }
+
+    </script>
 }

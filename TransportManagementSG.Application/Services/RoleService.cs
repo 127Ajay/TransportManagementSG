@@ -11,13 +11,9 @@ public class RoleService : IRoleService
     {
         _roleRepository = roleRepository;
     }
+    
     public async Task<IEnumerable<Role>> GetAllRoles(CancellationToken cancellationToken = default)
     {
         return await _roleRepository.GetAllRoles(cancellationToken);
-    }
-
-    public async Task<Role> GetRoleByName(string roleName, CancellationToken cancellationToken = default)
-    {
-        return await _roleRepository.GetRoleByName(roleName, cancellationToken);
     }
 }

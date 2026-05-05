@@ -34,7 +34,13 @@ namespace TransportManagementSG.UI.Controllers
             }
 
             ModelState.AddModelError("", "Invalid email or password");
-            return View(model);
+            return View("Login", model);
+        }
+
+        public IActionResult Logout()
+        {            
+            HttpContext.Session.Remove("UserEmail");
+            return RedirectToAction("Index", "Login");
         }
     }
 

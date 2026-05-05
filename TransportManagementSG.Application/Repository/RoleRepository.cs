@@ -1,4 +1,5 @@
 using Dapper;
+using System.Data;
 using TransportManagementSG.Application.Database;
 using TransportManagementSG.Application.Interfaces.Repository;
 using TransportManagementSG.Contracts.Model;
@@ -23,19 +24,7 @@ public class RoleRepository: IRoleRepository
             new CommandDefinition("usp_GetAllRoles", cancellationToken: cancellationToken));
         
         return roles;
-    }
+    }  
 
-    public async Task<Role> GetRoleByName(string roleName, CancellationToken cancellationToken = default)
-    {
-        using var connection = await _dbConnectionFactory.CreateConnectionAsync();
-        //using var transaction = connection.BeginTransaction();
-        
-        var parameters = new DynamicParameters();
-        parameters.Add("@RoleName", roleName);
-
-        var role = await connection.QueryFirstOrDefaultAsync<Role>(
-            new CommandDefinition("usp_GetAllRoles", parameters, cancellationToken: cancellationToken));
-        
-        return role;
-    }
+   
 }

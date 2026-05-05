@@ -9,7 +9,7 @@
     <div class="card shadow-lg p-4" style="width: 400px; border-radius: 12px;">
 
         <h3 class="text-center mb-4">Sign In</h3>
-
+        <div asp-validation-summary="All" class="text-danger"></div>
         @using (Html.BeginForm("Index", "Login", FormMethod.Post))
         {
             @Html.AntiForgeryToken()
