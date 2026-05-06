@@ -1,0 +1,56 @@
+﻿@model TransportManagementSG.UI.ViewModels.UserViewModel
+
+<div class="modal fade" id="userModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+                    
+            <div class="modal-header">
+                <h5 class="modal-title">Add User</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+
+                <form id="userForm">
+
+                    <input type="hidden" id="userId" value="0" />
+
+                    <div class="mb-2">
+                        <label>First Name</label>
+                        <input asp-for="FirstName" id="firstName" class="form-control" />
+                    </div>
+
+                    <div class="mb-2">
+                        <label>Last Name</label>
+                        <input asp-for="LastName" id="lastName" class="form-control" />
+                    </div>
+
+                    <div class="mb-2">
+                        <label>Email</label>
+                        <input asp-for="Email" id="email" class="form-control" />
+                    </div>
+
+                    <div class="mb-2">
+                        <label>Phone</label>
+                        <input asp-for="PhoneNumber" id="phoneNumber" class="form-control" />
+                    </div>
+
+                    <div class="mb-2">
+                        <label>Role</label>
+                        <select asp-for="RoleID" asp-items="Model.Roles" class="form-control">
+                            <option value="">-- Select Role --</option>
+                        </select>
+                    </div>
+
+                </form>
+
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button class="btn btn-primary" onclick="saveUser()">Save</button>
+            </div>
+
+        </div>
+    </div>
+</div>

@@ -5,6 +5,8 @@
     <title>@ViewBag.Title</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" />
+    
 
     <style>
             body {
@@ -50,12 +52,12 @@
                 <h4 class="text-center py-3 border-bottom">Admin Panel</h4>
 
                 <a href="@Url.Action("Dashboard", "Admin")">Dashboard</a>
-                <a href="@Url.Action("Registration", "Admin")">User Registration</a>
+                @* <a href="@Url.Action("Registration", "Admin")">User Registration</a> *@
                 <a href="@Url.Action("Index", "User")">Users</a>
                 <a href="@Url.Action("Index", "Role")">Roles</a>
-                <a href="@Url.Action("Index", "Login")">Logout</a>
+                <a href="@Url.Action("Logout", "Login")">Logout</a>
             </div>
-
+                
             <!-- RIGHT CONTENT -->
             <div class="col-md-10">
 
@@ -75,12 +77,15 @@
 
         </div>
     </div>
+    @* <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>*@
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <script src="~/lib/jquery/jquery.min.js"></script>
     <script src="~/lib/jquery-validation/jquery.validate.min.js"></script>
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
     @await Html.PartialAsync("_DeleteModal")
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
             document.addEventListener("DOMContentLoaded", function () {
 

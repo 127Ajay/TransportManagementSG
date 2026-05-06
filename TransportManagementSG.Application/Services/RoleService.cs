@@ -11,6 +11,7 @@ public class RoleService : IRoleService
     {
         _roleRepository = roleRepository;
     }
+    
     public async Task<IEnumerable<Role>> GetAllRoles(CancellationToken cancellationToken = default)
     {
         return await _roleRepository.GetAllRoles(cancellationToken);

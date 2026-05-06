@@ -187,8 +187,127 @@ public class DBInitializer
             ";
         await connection.ExecuteAsync(sql3);
 
-        var sql4 = @"
-                CREATE OR ALTER PROCEDURE usp_GetRoleById
+        var sql4 = @"                    
+        CREATE OR ALTER PROCEDURE sp_GetAllUsers
+                    AS
+                    BEGIN
+                        SET NOCOUNT ON;
+
+                        SELECT 
+                            u.UserId,
+                            u.FirstName,
+                            u.LastName,
+                            u.Email,
+                            u.PhoneNumber,
+                            r.RoleName   
+                        FROM [User] u
+                        INNER JOIN Role r 
+                            ON u.RoleID = r.RoleId
+                        WHERE u.IsActive = 1
+                          AND r.IsActive = 1;
+                    END
+        ";
+        await connection.ExecuteAsync(sql4);
+      
+      var sql5 = @"
+            CREATE OR ALTER PROCEDURE usp_CreateUser
+            @FirstName     NVARCHAR(100),
+            @LastName      NVARCHAR(100),
+            @Email         NVARCHAR(200),
+            @PhoneNumber   NVARCHAR(20),
+            @RoleID        INT = NULL
+
+            AS
+            BEGIN
+                SET NOCOUNT ON;
+
+                INSERT INTO [User]
+                (
+                    FirstName,
+                    LastName,
+                    Email,
+                    PhoneNumber,
+                    RoleID,
+                    IsActive,
+                    CreatedDate
+                )
+                VALUES
+                (
+                    @FirstName,
+                    @LastName,
+                    @Email,
+                    @PhoneNumber,
+                    @RoleID,
+                    1,
+                    GETDATE()
+                );
+
+                -- Return inserted Id (optional but useful)
+                SELECT SCOPE_IDENTITY() AS UserId;
+            END
+            ";
+
+        await connection.ExecuteAsync(sql5);
+
+        var sql6 = @"
+            CREATE OR ALTER PROCEDURE usp_DeleteUser
+                    @UserId INT
+                AS
+                BEGIN
+                    SET NOCOUNT ON;
+
+                    UPDATE [User]
+                    SET IsActive = 0
+                    WHERE UserId = @UserId;
+                END
+        ";
+
+        await connection.ExecuteAsync(sql6);
+
+        var sql7 = @"
+        CREATE OR ALTER PROCEDURE usp_GetUserById
+            @UserId INT
+                AS
+                BEGIN
+                    SET NOCOUNT ON;
+
+                    SELECT 
+                        UserId,
+                        FirstName,
+                        LastName,
+                        Email,
+                        PhoneNumber,
+                        RoleID
+                    FROM [User]
+                    WHERE UserId = @UserId;
+                END
+            ";
+
+        await connection.ExecuteAsync(sql7);
+
+        var sql8 = @"CREATE OR ALTER PROCEDURE usp_UpdateUser
+                @UserId INT,
+                @FirstName NVARCHAR(100),
+                @LastName NVARCHAR(100),
+                @Email NVARCHAR(200),
+                @PhoneNumber NVARCHAR(20),
+                @RoleID INT
+            AS
+            BEGIN
+                SET NOCOUNT ON;
+
+                UPDATE [User]
+                SET 
+                    FirstName = @FirstName,
+                    LastName = @LastName,
+                    Email = @Email,
+                    PhoneNumber = @PhoneNumber,
+                    RoleID = @RoleID
+                WHERE UserId = @UserId;
+            END";
+        await connection.ExecuteAsync(sql8);
+      
+        var sql9 = @"CREATE OR ALTER PROCEDURE usp_GetRoleById
                     @RoleId INT
                 AS
                 BEGIN
@@ -200,9 +319,9 @@ public class DBInitializer
                     FROM Role
                     WHERE RoleId = @RoleId;
                 END";
-        await connection.ExecuteAsync(sql4);
+        await connection.ExecuteAsync(sql9);
         
-        var sql5 = @"
+        var sql10 = @"
                     CREATE OR ALTER PROCEDURE usp_CreateRole
                         @RoleName NVARCHAR(100),
                         @IsActive BIT
@@ -215,9 +334,9 @@ public class DBInitializer
 
                         SELECT CAST(SCOPE_IDENTITY() AS INT) AS RoleId;
                     END";
-        await connection.ExecuteAsync(sql5);
+        await connection.ExecuteAsync(sql10);
 
-        var sql6 = @"
+        var sql11 = @"
                     CREATE OR ALTER PROCEDURE usp_UpdateRole
                         @RoleId INT,
                         @RoleName NVARCHAR(100),
@@ -231,9 +350,9 @@ public class DBInitializer
                             IsActive = @IsActive
                         WHERE RoleId = @RoleId;
                     END";
-        await connection.ExecuteAsync(sql6);
+        await connection.ExecuteAsync(sql11);
 
-        var sql7 = @"
+        var sql12 = @"
                     CREATE OR ALTER PROCEDURE usp_DeleteRole
                             @RoleId INT
                         AS
@@ -244,7 +363,7 @@ public class DBInitializer
                             SET IsActive = 0
                             WHERE RoleId = @RoleId;
                         END";
-        await connection.ExecuteAsync(sql7);
+        await connection.ExecuteAsync(sql12);
     }
     
     private async Task SeedRoles(IDbConnection connection)
