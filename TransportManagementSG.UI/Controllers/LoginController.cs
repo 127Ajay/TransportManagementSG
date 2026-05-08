@@ -8,9 +8,11 @@ namespace TransportManagementSG.UI.Controllers
     public class LoginController : Controller
     {
         private readonly IUserService _UserService;
-        public LoginController(IUserService UserService)
+        private readonly IJwtService _jwtService;
+        public LoginController(IUserService UserService, IJwtService jwtService)
         {
             _UserService = UserService;
+            _jwtService = jwtService;
         }
 
         [HttpGet]
@@ -30,6 +32,9 @@ namespace TransportManagementSG.UI.Controllers
             if (user != null)
             {
                 HttpContext.Session.SetString("UserEmail", user.Email);
+                var jwtToken = _jwtService.GenerateToken(user.Email, "Admin");
+                TempData["JWToken"] = jwtToken;
+
                 return RedirectToAction("Index", "Home");
             }
 
@@ -40,6 +45,8 @@ namespace TransportManagementSG.UI.Controllers
         public IActionResult Logout()
         {            
             HttpContext.Session.Remove("UserEmail");
+
+            HttpContext.Session.Remove("JWToken");
             return RedirectToAction("Index", "Login");
         }
     }

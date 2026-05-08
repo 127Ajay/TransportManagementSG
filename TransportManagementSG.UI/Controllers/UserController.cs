@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using TransportManagementSG.Application.Interfaces.Repository;
 using TransportManagementSG.Application.Repository;
@@ -8,6 +9,7 @@ using TransportManagementSG.UI.ViewModels;
 
 namespace TransportManagementSG.UI.Controllers
 {
+    //[Authorize]
     public class UserController : Controller
     {
         private readonly ILogger<UserController> _logger;
@@ -18,6 +20,9 @@ namespace TransportManagementSG.UI.Controllers
             _UserService = Userervice;
             _roleService = RoleService;
         }
+
+       
+        [HttpGet]
         public async Task<IActionResult> Index(CancellationToken cancellationToken)
         {
             var roles = await _roleService.GetAllRoles(cancellationToken);
@@ -32,12 +37,18 @@ namespace TransportManagementSG.UI.Controllers
             };
 
             return View(model);
-        }   
+        }
 
+        [Authorize]
         public async Task<IActionResult> GetAllUsers(CancellationToken token)
         {
+            var username = User.Identity.Name;
             var users = await _UserService.GetAllUsersAsync(token);
-            return Json(users);
+            return Json(new
+            {
+                LoggedInUser = username,
+                Data = users
+            });
         }
 
         [HttpGet]
