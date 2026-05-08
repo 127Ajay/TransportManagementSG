@@ -35,16 +35,34 @@
 @section Scripts {
     <script>
             let table;
+            let token = localStorage.getItem("token");
 
             $(document).ready(function () {
 
             table = $('#usersTable').DataTable({
                 processing: true,
                 ajax: {
-                    url: '/User/GetAllUsers',
-                    dataSrc: '',
-                    cache: false
-                },
+                        url: '/User/GetAllUsers',
+                        headers: {
+                            'Authorization': 'Bearer ' + token
+                        },
+                        dataSrc: 'data',
+                        cache: false,
+
+                         error: function (xhr) {
+
+                            if (xhr.status === 401) {
+
+                                alert("Session expired or unauthorized access.");
+                                localStorage.removeItem("token");
+                                window.location.href = '/Login';
+                            }
+                            else {
+
+                                alert("Error loading users.");
+                            }
+                        }
+                    },
                 columns: [
                     { data: 'userId', visible: false },
 
@@ -100,7 +118,7 @@
                 : '/User/UpdateUser';
 
             $.ajax({
-                url: url, 
+                url: url,
                 type: 'POST',
                 contentType: 'application/json',
                 data: JSON.stringify(user),
