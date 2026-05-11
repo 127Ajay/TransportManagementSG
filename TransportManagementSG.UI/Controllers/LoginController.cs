@@ -32,7 +32,7 @@ namespace TransportManagementSG.UI.Controllers
             if (user != null)
             {
                 HttpContext.Session.SetString("UserEmail", user.Email);
-                var jwtToken = _jwtService.GenerateToken(user.Email, "Admin");
+                var jwtToken = _jwtService.GenerateToken(user.Email, user.Role);
                 TempData["JWToken"] = jwtToken;
 
                 return RedirectToAction("Index", "Home");
