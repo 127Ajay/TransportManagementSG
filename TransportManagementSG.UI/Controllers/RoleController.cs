@@ -1,5 +1,6 @@
 using System.Linq;
 using System.Threading;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TransportManagementSG.Application.Interfaces.Repository;
 using TransportManagementSG.UI.Extensions;
@@ -7,6 +8,7 @@ using TransportManagementSG.UI.ViewModels;
 
 namespace TransportManagementSG.UI.Controllers;
 
+[Authorize(Policy = "AdminOnly")]
 public class RoleController : Controller
 {
     private readonly IRoleService _roleService;
@@ -37,7 +39,7 @@ public class RoleController : Controller
     {
         if (!ModelState.IsValid)
             return View(model);
-        
+
         var existingRole = await _roleService.GetRoleByName(model.RoleName, cancellationToken);
 
         if (existingRole != null)
@@ -45,7 +47,7 @@ public class RoleController : Controller
             ModelState.AddModelError(nameof(model.RoleName), "Role already exists.");
             return View(model);
         }
-        
+
         var role = model.ToModel();
         await _roleService.CreateRole(role, cancellationToken);
 
@@ -70,7 +72,7 @@ public class RoleController : Controller
         if (!ModelState.IsValid)
             return View(model);
 
-        
+
         var existingRole = await _roleService.GetRoleById(model.RoleId, cancellationToken);
 
         // 🔴 Rule 1: Prevent saving if name is unchanged
@@ -88,7 +90,7 @@ public class RoleController : Controller
             ModelState.AddModelError(nameof(model.RoleName), "Role already exists.");
             return View(model);
         }
-        
+
         var role = model.ToModel();
         var updated = await _roleService.UpdateRole(role, cancellationToken);
         if (!updated)

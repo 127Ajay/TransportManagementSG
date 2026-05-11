@@ -18,7 +18,7 @@ public class DBInitializer
 
         await CreateTables(connection);
         await CreateStoredProcedures(connection);
-        
+
         //Seed Data
         await SeedRoles(connection);
     }
@@ -121,7 +121,7 @@ public class DBInitializer
 
         await connection.ExecuteAsync(sql);
     }
-    
+
     private async Task CreateStoredProcedures(IDbConnection connection)
     {
         // 🔹 Create User SP
@@ -139,7 +139,7 @@ public class DBInitializer
                 WHERE IsActive = 1
                 ORDER BY RoleName;
             END";
-        
+
         await connection.ExecuteAsync(sql);
 
         var sql2 = @"
@@ -172,16 +172,19 @@ public class DBInitializer
                     SET NOCOUNT ON;
 
                     SELECT 
-                        UserId,
-                        FirstName,
-                        LastName,
-                        Email,
-                        RoleID,
-                        IsActive
-                    FROM [User]
-                    WHERE Email = @Email
-                      AND LoginPassword = @Password
-                      AND IsActive = 1
+                        u.UserId,
+                        u.FirstName,
+                        u.LastName,
+                        u.Email,
+                        u.RoleID,
+                        u.IsActive,
+                        r.RoleName AS Role
+                    FROM [User] u
+                    INNER JOIN Role r ON u.RoleID = r.RoleId
+                    WHERE u.Email = @Email
+                      AND u.LoginPassword = @Password
+                      AND u.IsActive = 1
+                      AND r.IsActive = 1
                 END
 
             ";
@@ -199,7 +202,7 @@ public class DBInitializer
                             u.LastName,
                             u.Email,
                             u.PhoneNumber,
-                            r.RoleName   
+                            r.RoleName AS Role
                         FROM [User] u
                         INNER JOIN Role r 
                             ON u.RoleID = r.RoleId
@@ -208,8 +211,8 @@ public class DBInitializer
                     END
         ";
         await connection.ExecuteAsync(sql4);
-      
-      var sql5 = @"
+
+        var sql5 = @"
             CREATE OR ALTER PROCEDURE usp_CreateUser
             @FirstName     NVARCHAR(100),
             @LastName      NVARCHAR(100),
@@ -306,7 +309,7 @@ public class DBInitializer
                 WHERE UserId = @UserId;
             END";
         await connection.ExecuteAsync(sql8);
-      
+
         var sql9 = @"CREATE OR ALTER PROCEDURE usp_GetRoleById
                     @RoleId INT
                 AS
@@ -320,7 +323,7 @@ public class DBInitializer
                     WHERE RoleId = @RoleId;
                 END";
         await connection.ExecuteAsync(sql9);
-        
+
         var sql10 = @"
                     CREATE OR ALTER PROCEDURE usp_CreateRole
                         @RoleName NVARCHAR(100),
@@ -365,7 +368,7 @@ public class DBInitializer
                         END";
         await connection.ExecuteAsync(sql12);
     }
-    
+
     private async Task SeedRoles(IDbConnection connection)
     {
         var exists = await connection.ExecuteScalarAsync<int>(

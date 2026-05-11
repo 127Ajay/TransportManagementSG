@@ -34,35 +34,39 @@
 
 @section Scripts {
     <script>
-            let table;
-            let token = localStorage.getItem("token");
+        let table;
+        let token = localStorage.getItem("token");
 
-            $(document).ready(function () {
+        if (!token) {
+            window.location.href = '/Login';
+        }
+
+        $(document).ready(function () {
 
             table = $('#usersTable').DataTable({
                 processing: true,
                 ajax: {
-                        url: '/User/GetAllUsers',
-                        headers: {
-                            'Authorization': 'Bearer ' + token
-                        },
-                        dataSrc: 'data',
-                        cache: false,
-
-                         error: function (xhr) {
-
-                            if (xhr.status === 401) {
-
-                                alert("Session expired or unauthorized access.");
-                                localStorage.removeItem("token");
-                                window.location.href = '/Login';
-                            }
-                            else {
-
-                                alert("Error loading users.");
-                            }
-                        }
+                    url: '/User/GetAllUsers',
+                    headers: {
+                        'Authorization': 'Bearer ' + token
                     },
+                    dataSrc: 'data',
+                    cache: false,
+
+                    error: function (xhr) {
+
+                        if (xhr.status === 401) {
+
+                            alert("Session expired or unauthorized access.");
+                            localStorage.removeItem("token");
+                            window.location.href = '/Login';
+                        }
+                        else {
+
+                            alert("Error loading users.");
+                        }
+                    }
+                },
                 columns: [
                     { data: 'userId', visible: false },
 
@@ -84,9 +88,9 @@
                         orderable: false,
                         render: function (data) {
                             return `
-                                <button class='btn btn-sm btn-warning' onclick='editUser(${data})'>Edit</button>
-                                <button class='btn btn-sm btn-danger' onclick='deleteUser(${data})'>Delete</button>
-                            `;
+                                    <button class='btn btn-sm btn-warning' onclick='editUser(${data})'>Edit</button>
+                                    <button class='btn btn-sm btn-danger' onclick='deleteUser(${data})'>Delete</button>
+                                `;
                         }
                     }
                 ]
@@ -113,7 +117,7 @@
                 roleID: $('#RoleID').val()
             };
 
-             const url = user.userId == 0
+            const url = user.userId == 0
                 ? '/User/CreateUser'
                 : '/User/UpdateUser';
 
@@ -131,19 +135,19 @@
                     $('#userForm')[0].reset
 
                     showMessage(
-                             user.userId == 0
-                                ? 'User added successfully'
-                                : 'User updated successfully',
-                                  'success'
-                                );
+                        user.userId == 0
+                            ? 'User added successfully'
+                            : 'User updated successfully',
+                        'success'
+                    );
 
                     setTimeout(() => {
-                         table.ajax.reload(null, false);
+                        table.ajax.reload(null, false);
                     }, 500);
 
                 },
                 error: function () {
-                      $('#userModal').modal('hide');
+                    $('#userModal').modal('hide');
                     showMessage('User creation failed', 'danger');
 
                 }
@@ -155,8 +159,8 @@
             const box = $('#messageBox');
 
             box.removeClass('d-none alert-success alert-danger')
-               .addClass('alert-' + type)
-               .text(message);
+                .addClass('alert-' + type)
+                .text(message);
 
             // auto hide after 3 sec
             setTimeout(() => {

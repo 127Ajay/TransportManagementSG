@@ -8,6 +8,7 @@ namespace TransportManagementSG.UI.Controllers
     {
         public IActionResult Index()
         {
+            ViewBag.Token = HttpContext.Session.GetString("JWToken");
             return View();
         }
 

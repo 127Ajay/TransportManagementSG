@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using TransportManagementSG.Application.Interfaces.Repository;
@@ -21,7 +23,7 @@ namespace TransportManagementSG.UI.Controllers
             _roleService = RoleService;
         }
 
-       
+
         [HttpGet]
         public async Task<IActionResult> Index(CancellationToken cancellationToken)
         {
@@ -39,7 +41,7 @@ namespace TransportManagementSG.UI.Controllers
             return View(model);
         }
 
-        [Authorize]
+        [Authorize(Policy = "ManagerOrAdmin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<IActionResult> GetAllUsers(CancellationToken token)
         {
             var username = User.Identity.Name;
@@ -52,6 +54,7 @@ namespace TransportManagementSG.UI.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> GetAllRoles(CancellationToken cancellationToken)
         {
             var roles = await _roleService.GetAllRoles(cancellationToken);
@@ -66,6 +69,7 @@ namespace TransportManagementSG.UI.Controllers
         }
 
         [HttpPost]
+        [Authorize(Policy = "AdminOnly")]
         public async Task<IActionResult> CreateUser([FromBody] UserViewModel model, CancellationToken token)
         {
             if (!ModelState.IsValid)
@@ -87,6 +91,7 @@ namespace TransportManagementSG.UI.Controllers
         }
 
         [HttpPost]
+        [Authorize(Policy = "AdminOnly")]
         public async Task<IActionResult> DeleteUser(int id, CancellationToken token)
         {
             await _UserService.DeleteUserAsync(id, token);
@@ -94,6 +99,7 @@ namespace TransportManagementSG.UI.Controllers
         }
 
         [HttpGet]
+        [Authorize(Policy = "ManagerOrAdmin")]
         public async Task<IActionResult> GetUserById(int id, CancellationToken token)
         {
             var user = await _UserService.GetUserByIdAsync(id, token);
@@ -101,6 +107,7 @@ namespace TransportManagementSG.UI.Controllers
         }
 
         [HttpPost]
+        [Authorize(Policy = "AdminOnly")]
         public async Task<IActionResult> UpdateUser([FromBody] UserViewModel model, CancellationToken token)
         {
             var user = new User
@@ -111,12 +118,11 @@ namespace TransportManagementSG.UI.Controllers
                 PhoneNumber = model.PhoneNumber,
                 RoleID = (int)model.RoleID,
                 UserId = (int)model.UserId
-                
+
             };
 
             await _UserService.UpdateUserAsync(user, token);
             return Ok();
         }
     }
-}   
-    
+}
