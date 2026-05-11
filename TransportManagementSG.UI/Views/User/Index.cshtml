@@ -49,19 +49,25 @@
                         dataSrc: 'data',
                         cache: false,
 
-                         error: function (xhr) {
+                        error: function (xhr) {
 
-                            if (xhr.status === 401) {
+                        if (xhr.status === 401) {
 
-                                alert("Session expired or unauthorized access.");
-                                localStorage.removeItem("token");
-                                window.location.href = '/Login';
-                            }
-                            else {
+                            alert("Session expired. Please login again.");  
 
-                                alert("Error loading users.");
-                            }
+                            localStorage.removeItem("token");
+
+                            window.location.href = '/Login';
                         }
+                        else if (xhr.status === 403) {
+
+                            alert("You are not authorized to access this resource.");
+                        }
+                        else {
+
+                            alert("Error loading users.");
+                        }
+                    }
                     },
                 columns: [
                     { data: 'userId', visible: false },

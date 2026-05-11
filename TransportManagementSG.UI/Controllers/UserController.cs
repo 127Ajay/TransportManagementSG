@@ -39,7 +39,8 @@ namespace TransportManagementSG.UI.Controllers
             return View(model);
         }
 
-        [Authorize]
+        //[Authorize]
+        [Authorize(Roles = "Manager")]
         public async Task<IActionResult> GetAllUsers(CancellationToken token)
         {
             var username = User.Identity.Name;

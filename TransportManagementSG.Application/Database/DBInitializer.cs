@@ -171,17 +171,20 @@ public class DBInitializer
                 BEGIN
                     SET NOCOUNT ON;
 
-                    SELECT 
-                        UserId,
-                        FirstName,
-                        LastName,
-                        Email,
-                        RoleID,
-                        IsActive
-                    FROM [User]
-                    WHERE Email = @Email
-                      AND LoginPassword = @Password
-                      AND IsActive = 1
+                   SELECT
+                        u.UserId,
+                        u.FirstName,
+                        u.LastName,
+                        u.Email,
+                        u.RoleID,
+                        u.IsActive,
+                        r.RoleName AS Role
+                    FROM [User] u
+                    INNER JOIN Role r ON u.RoleID = r.RoleId
+                    WHERE u.Email = @Email
+                      AND u.LoginPassword = @Password
+                      AND u.IsActive = 1
+                      AND r.IsActive = 1
                 END
 
             ";
