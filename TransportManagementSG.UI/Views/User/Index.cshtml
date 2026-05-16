@@ -53,7 +53,7 @@
 
                         if (xhr.status === 401) {
 
-                            alert("Session expired. Please login again.");  
+                            alert("Session expired. Please login again.");
 
                             localStorage.removeItem("token");
 
@@ -190,16 +190,28 @@
                     table.ajax.reload(null, false);
                 },
 
-                error: function () {
-                    showMessage('User deletion failed', 'danger');
-                }
+                error: function (xhr) {
+
+            console.log(xhr);
+
+            // let response = xhr.responseJSON;
+
+            // let message = response?.message || 'User deletion failed';
+
+            // showMessage(message, 'danger');
+
+                console.log("STATUS:", xhr.status);
+
+                console.log("RESPONSE TEXT:");
+                console.log(xhr.responseText);
+        }
             });
         }
 
         function editUser(id) {
 
             $.get('/User/GetUserById?id=' + id, function (data) {
-                
+
                 $('#userId').val(data.userId);
                 $('#firstName').val(data.firstName);
                 $('#lastName').val(data.lastName);
