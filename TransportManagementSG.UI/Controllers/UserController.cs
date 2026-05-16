@@ -56,7 +56,7 @@ namespace TransportManagementSG.UI.Controllers
         public async Task<IActionResult> GetAllRoles(CancellationToken cancellationToken)
         {
             var roles = await _roleService.GetAllRoles(cancellationToken);
-
+            
             var result = roles.Select(r => new
             {
                 roleID = r.RoleId,
@@ -71,6 +71,7 @@ namespace TransportManagementSG.UI.Controllers
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
+            
 
             var user = new User
             {
@@ -90,6 +91,7 @@ namespace TransportManagementSG.UI.Controllers
         [HttpPost]
         public async Task<IActionResult> DeleteUser(int id, CancellationToken token)
         {
+            throw new Exception("Testing Global Exception Handler");
             await _UserService.DeleteUserAsync(id, token);
             return Ok();
         }
@@ -117,6 +119,17 @@ namespace TransportManagementSG.UI.Controllers
 
             await _UserService.UpdateUserAsync(user, token);
             return Ok();
+        }
+
+
+        public IActionResult TestMvcException()
+        {
+            throw new Exception("MVC Request Exception");
+        }
+
+        public IActionResult Error()
+        {
+            return View();
         }
     }
 }   
