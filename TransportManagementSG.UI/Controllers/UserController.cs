@@ -92,8 +92,8 @@ namespace TransportManagementSG.UI.Controllers
         public async Task<IActionResult> DeleteUser(int id, CancellationToken token)
         {
             throw new Exception("Testing Global Exception Handler");
-            await _UserService.DeleteUserAsync(id, token);
-            return Ok();
+            //await _UserService.DeleteUserAsync(id, token);
+            //return Ok();
         }
 
         [HttpGet]
